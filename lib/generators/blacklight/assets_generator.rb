@@ -9,7 +9,7 @@ module Blacklight
     # This could be skipped if you want to use webpacker
     def add_javascript_dependencies
       gem 'bootstrap', options[:'bootstrap-version']
-      gem 'jquery-rails'
+      gem 'jquery-rails' if bootstrap_4? # Bootstrap 4 has a dependency on jquery
     end
 
     ##
@@ -43,10 +43,10 @@ module Blacklight
         end
       end
 
+      append_to_file 'app/assets/javascripts/application.js', "//= require jquery3\n\n" if bootstrap_4?
+
       append_to_file 'app/assets/javascripts/application.js' do
         <<~CONTENT
-          //= require jquery3
-
           // Required by Blacklight
           //= require popper
           //= require bootstrap
@@ -56,6 +56,10 @@ module Blacklight
     end
 
     private
+
+    def bootstrap_4?
+      options[:'bootstrap-version'].match?(/\A[^0-9]*4\./)
+    end
 
     def has_blacklight_assets?
       application_js.include?('blacklight/blacklight')
