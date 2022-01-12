@@ -156,4 +156,18 @@ RSpec.describe Blacklight::DocumentComponent, type: :component do
     component.partial { 'Partials' }
     expect(rendered).to have_content 'Partials'
   end
+
+  context 'with before_title' do
+    subject(:component) do
+      described_class.new(presenter: view_context.document_presenter(document)) do |component|
+        component.title do |c|
+          c.before_title { 'Prefix!' }
+        end
+      end
+    end
+
+    it 'shows the prefix' do
+      expect(rendered).to have_content "Prefix!"
+    end
+  end
 end
